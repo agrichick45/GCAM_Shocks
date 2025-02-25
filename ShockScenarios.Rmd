@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-setwd("C:/Users/ALIESCH/OneDrive - Environmental Protection Agency (EPA)/Desktop/MissouriGCAM/Shocks")
+
 ```
 
 ## Load Packages and Files
@@ -279,7 +279,7 @@ SoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
 #Create a series loop to read in all of the data
 
 #Create a list of all .csv files in the output folder
-files <- list.files( pattern = "\\values.csv$", 
+files <- list.files(path="~/github/GCAMShocks/GCAM_Shocks/Shocks", pattern = "\\values.csv$", 
                     full.names = TRUE)
 
 #Initialize an empty list to store data frames
@@ -494,3 +494,8 @@ unmanPast_soil_emiss_sums_SS_Models.plt<-ggplot(data= wide_sum_soil_emiss %>%
   #use the custom color pallette
   scale_color_manual(values=ModelColors)
 
+```
+
+```{r}
+CornShockVegLines.plt
+```
