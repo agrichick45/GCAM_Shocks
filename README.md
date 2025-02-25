@@ -160,14 +160,8 @@ CornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                      labels = c( "Forest", "Grassland", "Harvested Cropland", 
                                  "Other Arable Land", "Pasture", "Shrubland", 
                                  "Tundra", "Unmanaged Pasture", "Urban Land"))
-```
 
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 
-``` r
 #Create a spaghetti plot of land use area using area by category
 SoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                     filter(year >2015), 
@@ -416,22 +410,7 @@ wide_sum_soil_emiss<- sum_cat_soil_emiss %>%
   pivot_wider(names_from = scenario, values_from = c(area)) %>%
   mutate(DifCornShock = CORN1BG - BASE) %>%
   mutate(DifSoyShock = SOY1BG - BASE)
-```
 
-    ## Warning: There was 1 warning in `mutate()`.
-    ## ℹ In argument: `across(c("year"), substr, 2, nchar(year))`.
-    ## ℹ In group 1: `Series = "FAO"` `scenario = "BASE"`.
-    ## Caused by warning:
-    ## ! The `...` argument of `across()` is deprecated as of dplyr 1.1.0.
-    ## Supply arguments directly to `.fns` through an anonymous function instead.
-    ## 
-    ##   # Previously
-    ##   across(a:b, mean, na.rm = TRUE)
-    ## 
-    ##   # Now
-    ##   across(a:b, \(x) mean(x, na.rm = TRUE))
-
-``` r
 cum_soil_emiss_sums<-wide_sum_soil_emiss %>%
    group_by(Series, year) %>% 
   summarise(across(where(is.numeric), sum)) %>%
