@@ -31,6 +31,7 @@ landUse<-read_csv("LandUse_Shocks.csv")
 vegShocks<-read_csv("Vegetative_Shocks.csv")
 ```
 
+### Define color 
 
 ```{r}
 LUColors <- c("UrbanLand"="#C80813FF", "Tundra"="#71D0F5FF", 
@@ -403,6 +404,13 @@ sum_merged_data <- mergedData %>%
    group_by(Series, year) %>% 
   summarise(across(where(is.numeric), sum)) 
 
+  
+net_cum_sum_merged_data<-   sum_merged_data %>%
+  #calculate the cumulative emissions
+  group_by(Series, year) %>% 
+  mutate(aggNetSumDifCorncount = cumsum(netDifCornShock)) %>%
+  mutate(aggNetSumDifSoycount = cumsum(netDifSoyShock))
+
 
 net_emiss_CS_Models.plt<-ggplot(data= sum_merged_data, 
                          aes(x=year, y=netDifCornShock, group=Series, color=Series))+
@@ -428,7 +436,7 @@ net_emiss_SS_Models.plt<-ggplot(data= sum_merged_data,
 
 ```
 
-
+## Soil Emissiosn
 ```{r}
 cum_soil_emiss_sums_CS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
                                     filter(year > 2015), 
