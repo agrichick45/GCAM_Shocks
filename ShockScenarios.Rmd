@@ -2,7 +2,9 @@
 title: "Future Shock Scenarios"
 author: "Mandy Liesch"
 date: "2025-02-20"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
@@ -29,7 +31,6 @@ landUse<-read_csv("LandUse_Shocks.csv")
 vegShocks<-read_csv("Vegetative_Shocks.csv")
 ```
 
-### Land Use Color Pallet
 
 ```{r}
 LUColors <- c("UrbanLand"="#C80813FF", "Tundra"="#71D0F5FF", 
