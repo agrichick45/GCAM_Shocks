@@ -15,18 +15,10 @@ library(plyr)
 library(flexdashboard)
 library(tidyverse)
 
+landUse<-read_csv("LandUse_Shocks.csv")
 
-```
+vegShocks<-read_csv("Vegetative_Shocks.csv")
 
-Soil Emission Plots
-=======================================================================
-
-Row
------------------------------------------------------------------------
-
-### Corn Shock: Cumulative Soil Emissions
-
-```{r}
 LUColors <- c("UrbanLand"="#C80813FF", "Tundra"="#71D0F5FF", 
               "Rock/Ice/Desert"="#8A9197FF", "Cropland" = "#FED439FF",
               "HarvCropLand"="#FED439FF", "OtherArableLand" = "#D2AF81FF", 
@@ -40,6 +32,143 @@ vegCEmissions<-c("#46732EFF")
 ModelColors<- c("FAO"="#370335FF", "Houghton" = "#FED439FF", 
                 "GCAM" = "#FED439FF", "HWSD"="#1A9993FF", "SG17" = "#197EC0FF",
                 "SG20"="#F05C3BFF")
+
+#Break up the land leaf columns into subsets 
+#(each land leaf has 4 different categories)
+new_LU<-landUse %>% 
+  separate(LandLeaf, c("LandUse", "Basin", "Water", "Input")) %>%
+  separate(scenario, into = c('scenario', 'date'), sep = ",") %>%
+  select(-c("date", "Basin", "Units"))
+
+
+#Sum together all of the land leaf files by land use type
+sum_new_LU<- new_LU %>% 
+  group_by(scenario, LandUse) %>% 
+  summarise(across(where(is.numeric), sum))
+
+#Reclassify land use types into broader categories
+cat_LU<-sum_new_LU %>% 
+  mutate(Category = case_when(
+  #Cropland category  
+  LandUse %in% 
+    #Biomass Crops
+    c("biomassGrass", "biomassTree",  
+    #Fodder Crops
+      "FodderGrass", "FodderHerb", 
+    #Grain Crops
+      "Corn",  "Soybean", "Wheat", "OtherGrain",
+    #Oil Crops
+      "OilCrop", "Rapeseed", 
+    #Other Crops
+      "FiberCrop", "MiscCrop", "RootTuber",  "SugarCrop") 
+    #Land Use Name
+      ~ "HarvCropLand",
+    #Other Arable Land
+    LandUse == "OtherArableLand" ~"OtherArableLand",
+    #Forest categories
+    LandUse %in% c("Forest", "UnmanagedForest", "ProtectedUnmanagedForest")
+                ~ "Forest",
+    #Grassland categories
+    LandUse %in% c("Grassland", "ProtectedGrassland") ~ "Grassland", 
+    #Pasture category
+    LandUse=="Pasture" ~ "Pasture",
+    #Unamanged pasture category
+    LandUse %in% c("ProtectedUnmanagedPasture", "UnmanagedPasture") 
+              ~ "UnmanagedPasture",
+    #Shrubland category
+    LandUse %in% c("Shrubland", "ProtectedShrubland") ~ "Shrubland",
+    #Other categories
+    LandUse=="Tundra" ~ "Tundra",
+    LandUse=="UrbanLand" ~ "UrbanLand",
+    #Default Return Statement
+    TRUE~NA_character_
+  )
+)
+
+#Sum everything up by defined land use category
+sum_cat_LU<-cat_LU %>% 
+  group_by(scenario, Category) %>% 
+  summarise(across(where(is.numeric), sum))
+
+#Create a long dataframe with land use, years, and area 
+wide_sum_LU<-sum_cat_LU %>% 
+  pivot_longer(!c(scenario, Category), names_to=c("year"), values_to = "area") %>%
+  #convert years into the numeric values
+  mutate(year = as.numeric(year)) %>% 
+  pivot_wider(names_from = scenario, values_from = c(area)) %>%
+  mutate(DifCornShock = CORN1BG - BASE) %>%
+  mutate(DifSoyShock = SOY1BG - BASE) %>%
+  mutate(soyMinCorn = SOY1BG- CORN1BG)
+
+#Break up the land leaf columns into subsets 
+#(each land leaf has 4 different categories)
+new_veg<-vegShocks %>% 
+  separate(LandLeaf, c("LandUse", "Basin", "Water", "Input")) %>%
+  separate(scenario, into = c('scenario', 'date'), sep = ",") %>%
+  select(-c("date", "Basin", "Units"))
+
+
+#Sum together all of the land leaf files by land use type
+sum_new_veg<- new_veg %>% 
+  group_by(scenario, LandUse) %>% 
+  summarise(across(where(is.numeric), sum))
+
+#Reclassify land use types into broader categories
+cat_veg<-sum_new_veg %>% 
+  mutate(Category = case_when(
+  #Cropland category  
+  LandUse %in% 
+    #Biomass Crops
+    c("biomassGrass", "biomassTree",  
+    #Fodder Crops
+      "FodderGrass", "FodderHerb", 
+    #Grain Crops
+      "Corn",  "Soybean", "Wheat", "OtherGrain",
+    #Oil Crops
+      "OilCrop", "Rapeseed", 
+    #Other Crops
+      "FiberCrop", "MiscCrop", "RootTuber",  "SugarCrop") 
+    #Land Use Name
+      ~ "HarvCropLand",
+    #Other Arable Land
+    LandUse == "OtherArableLand" ~"OtherArableLand",
+    #Forest categories
+    LandUse %in% c("Forest", "UnmanagedForest", "ProtectedUnmanagedForest")
+                ~ "Forest",
+    #Grassland categories
+    LandUse %in% c("Grassland", "ProtectedGrassland") ~ "Grassland", 
+    #Pasture category
+    LandUse=="Pasture" ~ "Pasture",
+    #Unamanged pasture category
+    LandUse %in% c("ProtectedUnmanagedPasture", "UnmanagedPasture") 
+              ~ "UnmanagedPasture",
+    #Shrubland category
+    LandUse %in% c("Shrubland", "ProtectedShrubland") ~ "Shrubland",
+    #Other categories
+    LandUse=="Tundra" ~ "Tundra",
+    LandUse=="UrbanLand" ~ "UrbanLand",
+    #Default Return Statement
+    TRUE~NA_character_
+  )
+)
+
+#Sum everything up by defined land use category
+sum_cat_veg<-cat_veg %>% 
+  group_by(scenario, Category) %>% 
+  summarise(across(where(is.numeric), sum)) %>%
+  select(scenario:'2060')
+
+
+#Create a long dataframe with land use, years, and area 
+wide_sum_veg<-sum_cat_veg  %>% 
+  pivot_longer(!c(scenario, Category), names_to=c("year"), values_to = "area") %>%
+  #convert years into the numeric values
+  mutate(year = as.numeric(year)) %>% 
+  pivot_wider(names_from = scenario, values_from = c(area)) %>%
+  mutate(DifCornShock = CORN1BG - BASE) %>%
+  mutate(DifSoyShock = SOY1BG - BASE) 
+
+
 
 
 #Create a series loop to read in all of the data
@@ -132,6 +261,83 @@ cum_soil_emiss_sums<-wide_sum_soil_emiss %>%
 #calculate the cumulative emissions
   mutate(aggDifCorncount = cumsum(DifCornShock)) %>%
   mutate(aggDifSoycount = cumsum(DifSoyShock))
+
+
+mergedData<-merge(wide_sum_soil_emiss, wide_sum_veg, 
+                  by=c("Category", "year"), all=TRUE) %>%
+#rename all of the columns after the merge
+               rename( c( "BASE.soil" ="BASE.x", 
+                           "BASE.veg" = "BASE.y", 
+                           "CORN1BG.soil" =  "CORN1BG.x", 
+                           "CORN1BG.veg" = "CORN1BG.y",
+                          "SOY1BG.soil" =  "SOY1BG.x", 
+                           "SOY1BG.veg" = "SOY1BG.y",
+                          "DifCornShock.soil" = "DifCornShock.x", 
+                          "DifSoyShock.soil" = "DifSoyShock.x", 
+                           "DifCornShock.veg" = "DifCornShock.y", 
+                          "DifSoyShock.veg" = "DifSoyShock.y" )) %>%
+                mutate(netDifCornShock = DifCornShock.soil + DifCornShock.veg) %>%
+                mutate(netDifSoyShock = DifSoyShock.soil + DifSoyShock.veg)
+
+sum_merged_data <- mergedData %>%
+   group_by(Series, year) %>% 
+  summarise(across(where(is.numeric), sum)) 
+```
+
+Net and Cumulative Emissions 
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+### Total Net Corn Shock Emissions Over Baseline
+
+```{r}
+
+
+
+net_emiss_CS_Models.plt<-ggplot(data= sum_merged_data %>%
+                                    filter(year > 2015), 
+                         aes(x=year, y=netDifCornShock, group=Series, color=Series))+
+  geom_line(aes(), size=2) +
+  #add a title
+  #ggtitle("Total Net Corn Shock Emissions Over Baseline") +
+  #add labels
+  labs( x='Year', y='Emissions (Mt)') +
+  #use the custom color pallette
+  scale_color_manual(values=ModelColors)
+
+ggplotly(net_emiss_CS_Models.plt)
+```
+
+### Total Net Soy Shock Emissions Over Baseline
+```{r}
+net_emiss_SS_Models.plt<-ggplot(data= sum_merged_data, 
+                         aes(x=year, y=netDifSoyShock, group=Series, color=Series))+
+  geom_line(aes(), size=2) +
+  #add a title
+  #ggtitle("Total Net Soy Shock Emissions Over Baseline") +
+  #add labels
+  labs( x='Year', y='Emissions (Mt)') +
+  #use the custom color pallette
+  scale_color_manual(values=ModelColors)
+
+ggplotly(net_emiss_SS_Models.plt)
+```
+
+Row
+-----------------------------------------------------------------------
+
+
+Soil Emission Plots
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+
+### Total Corn Shock Emissions Over Baseline
+
+```{r}
+
   
 cum_soil_emiss_sums_CS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
                                     filter(year > 2015), 
@@ -148,7 +354,7 @@ ggplotly(cum_soil_emiss_sums_CS_Models.plt)
 ```
 
 
-### Soy Shock: Cumulative Soil Emissions
+### Total Soy Shock Emissions Over Baseline
 
 ```{r}
 cum_soil_emiss_sums_SS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
@@ -156,7 +362,7 @@ cum_soil_emiss_sums_SS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
                          aes(x=year, y=DifSoyShock, group=Series))+
   geom_line(aes(color=Series), size=2) +
   #add a title
-  ggtitle("Total Soy Shock Emissions Over Baseline") +
+  #ggtitle("Total Soy Shock Emissions Over Baseline") +
   #add labels
   labs( x='Year', y='Emissions (Mt)') +
   #use the custom color pallette
@@ -208,7 +414,7 @@ tot_cum_soil_emiss_sums_SS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
 ggplotly(tot_cum_soil_emiss_sums_SS_Models.plt)
 ```
 
-geom_density
+Vegetation and Land Use Plots
 =======================================================================
 
 Row
