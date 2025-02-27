@@ -323,13 +323,15 @@ sum_merged_data <- mergedData %>%
 Read Me
 =======================================================================
 
-This is an interactive dashboard set up to visualize the Baseline GCAM model results for the five different soil carbon scenarios (FAO Glosis, Houghton, Harmonized World Soils Database, Soil Grids 2017, and Soil Grids 2020). 
+This is an interactive dashboard set up to visualize the Baseline GCAM model results for the five different soil carbon scenarios (FAO Glosis (Series 84), Houghton (Series 85), Harmonized World Soils Database (Series 86), Soil Grids 2017 (Series 87), and Soil Grids 2020(Series 89)). 
 
-There are 5 tabs, this initial Read Me, the Baseline Scenarios, 
+There are 5 tabs, this initial Read Me, and the Baseline Scenarios, which have the actual numbers associated with each of the simulations) 
 
 The Net and cumulative Emissions, Soil Emission Plots, Vegetative Plots, and Land Use Plots show the different value of the corn and soy shocks in relative to the baseline scenarios. 
 
 The initialization parameters for each model are listed below. 
+
+Each plot is clickable, and lines can be toggled on and off, zoomed in on, and panned. 
 
 Row
 -----------------------------------------------------------------------
@@ -341,6 +343,12 @@ include_graphics("InitialTable.jpg")
 
 Future Baseline Scenarios
 =======================================================================
+Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
+
+Unmanaged Pasture - Cropland. 
+
+FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
+
 
 Row
 -----------------------------------------------------------------------
@@ -363,6 +371,8 @@ LandUseAreaFuture.plt<- ggplot(wide_sum_LU %>%
   scale_color_manual(values=LUColors)
 
 ggplotly(LandUseAreaFuture.plt)
+
+
 
 ```
 
@@ -440,6 +450,12 @@ ggplotly(futCumNetEmissions.plt)
 Net and Cumulative Emissions 
 =======================================================================
 
+Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
+
+Unmanaged Pasture - Cropland. 
+
+FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
+
 Row
 -----------------------------------------------------------------------
 ### Total Net Corn Shock Emissions Over Baseline
@@ -516,6 +532,12 @@ ggplotly(cum_net_emiss_SS_Models.plt)
 
 Soil Emission Plots
 =======================================================================
+
+Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
+
+Unmanaged Pasture - Cropland. 
+
+FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
 
 Row
 -----------------------------------------------------------------------
@@ -602,6 +624,12 @@ ggplotly(tot_cum_soil_emiss_sums_SS_Models.plt)
 
 Vegetative Plots
 =======================================================================
+
+Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
+
+Unmanaged Pasture - Cropland. 
+
+FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
 
 Row
 -----------------------------------------------------------------------
@@ -703,6 +731,12 @@ ggplotly(cumSoyShockVegUseLines.plt)
 
 Land Use Plots
 =======================================================================
+
+Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
+
+Unmanaged Pasture - Cropland. 
+
+FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
 
 Row
 -----------------------------------------------------------------------
