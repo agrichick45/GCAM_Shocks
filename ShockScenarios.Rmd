@@ -119,7 +119,11 @@ wide_sum_LU<-sum_cat_LU %>%
   pivot_wider(names_from = scenario, values_from = c(area)) %>%
   mutate(DifCornShock = CORN1BG - BASE) %>%
   mutate(DifSoyShock = SOY1BG - BASE) %>%
-  mutate(soyMinCorn = SOY1BG- CORN1BG)
+  group_by(Category) %>%
+  mutate(CumSumCornLand = cumsum(DifCornShock)) %>%
+  mutate(CumSumSoyLand = cumsum(DifSoyShock))
+  
+  
 ```
 
 ## Shock Scenario Land Use Plots
@@ -156,13 +160,26 @@ SoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                  "Other Arable Land", "Pasture", "Shrubland", 
                                  "Tundra", "Unmanaged Pasture", "Urban Land"))
 
-#Create a spaghetti plot of land use area using area by category
-SoyMinusCornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
+CumCornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                     filter(year >2015), 
-                         aes(x=year, y=soyMinCorn, group=Category))+
+                         aes(x=year, y=CumSumCornLand, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
-  ggtitle("Soy Shock Minus Corn Shock Land Use Change by Land Use Type") +
+  #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
+  #add labels
+  labs( x='Year', y='Land Area (thous sq km)') +
+  #use the custom color pallette
+  scale_color_manual(values=LUColors, name = "Land Use", 
+                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
+                                 "Other Arable Land", "Pasture", "Shrubland", 
+                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+
+CumSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
+                                    filter(year >2015), 
+                         aes(x=year, y=CumSoyCornLand, group=Category))+
+  geom_line(aes(color=Category), size=2) +
+  #add a title
+  #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
   labs( x='Year', y='Land Area (thous sq km)') +
   #use the custom color pallette
@@ -241,7 +258,10 @@ wide_sum_veg<-sum_cat_veg  %>%
   mutate(year = as.numeric(year)) %>% 
   pivot_wider(names_from = scenario, values_from = c(area)) %>%
   mutate(DifCornShock = CORN1BG - BASE) %>%
-  mutate(DifSoyShock = SOY1BG - BASE) 
+  mutate(DifSoyShock = SOY1BG - BASE) %>%
+  group_by(Category) %>%
+  mutate(cumSumCornVeg= cumsum(DifCornShock))%>%
+  mutate(cumSumSoyVeg= cumsum(DifSoyShock))
 
 
 ```
@@ -279,6 +299,38 @@ SoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
                      labels = c( "Forest", "Grassland", "Harvested Cropland", 
                                  "Other Arable Land", "Pasture", "Shrubland", 
                                  "Tundra", "Unmanaged Pasture", "Urban Land"))
+
+#Create a spaghetti plot of land use area using area by category
+CornShockVegLines.plt<-ggplot(data= wide_sum_veg %>%
+                                    filter(year >2015), 
+                         aes(x=year, y=cumSumCornVeg, group=Category))+
+  geom_line(aes(color=Category), size=2) +
+  #add a title
+  ggtitle("Corn Shock Vegetative Emission Change Over Baseline by Land Use Type") +
+  #add labels
+  labs( x='Year', y='Vegetative Emissions (Mt)') +
+  #use the custom color pallette
+  scale_color_manual(values=LUColors, name = "Land Use", 
+                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
+                                 "Other Arable Land", "Pasture", "Shrubland", 
+                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+
+
+#Create a spaghetti plot of land use area using area by category
+cumSoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
+                                    filter(year >2015), 
+                         aes(x=year, y=cumSumSoyVeg, group=Category))+
+  geom_line(aes(color=Category), size=2) +
+  #add a title
+  ggtitle("Soy Shock Vegetative Change Over Baseline by Land Use Type") +
+  #add labels
+  labs( x='Year', y='Vegetative Emissions (Mt)') +
+  #use the custom color pallette
+  scale_color_manual(values=LUColors, name = "Land Use", 
+                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
+                                 "Other Arable Land", "Pasture", "Shrubland", 
+                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+
 
 
 ```
@@ -397,20 +449,20 @@ mergedData<-merge(wide_sum_soil_emiss, wide_sum_veg,
                           "DifSoyShock.soil" = "DifSoyShock.x", 
                            "DifCornShock.veg" = "DifCornShock.y", 
                           "DifSoyShock.veg" = "DifSoyShock.y" )) %>%
-                mutate(netDifCornShock = DifCornShock.soil + DifCornShock.veg) %>%
-                mutate(netDifSoyShock = DifSoyShock.soil + DifSoyShock.veg)
+                dplyr::mutate(netDifCornShock = DifCornShock.soil + DifCornShock.veg) %>%
+                dplyr::mutate(netDifSoyShock = DifSoyShock.soil + DifSoyShock.veg)
 
 sum_merged_data <- mergedData %>%
    group_by(Series, year) %>% 
-  summarise(across(where(is.numeric), sum)) 
+  dplyr::summarise(across(where(is.numeric), sum)) %>%
+  group_by(Series) %>%
+  dplyr::mutate(aggNetSumDifCorncount = cumsum(netDifCornShock)) %>%
+  dplyr::mutate(aggNetSumDifSoycount = cumsum(netDifSoyShock))
 
-  
-net_cum_sum_merged_data<-   sum_merged_data %>%
-  #calculate the cumulative emissions
-  group_by(Series, year) %>% 
-  mutate(aggNetSumDifCorncount = cumsum(netDifCornShock)) %>%
-  mutate(aggNetSumDifSoycount = cumsum(netDifSoyShock))
 
+#sum_merged_data$aggNetSumDifCorncount <- ave(sum_merged_data$netDifCornShock, sum_merged_data$Series, FUN=cumsum)
+
+#sum_merged_data$aggNetSumDifSoycount <- ave(sum_merged_data$netDifSoyShock, sum_merged_data$Series, FUN=cumsum)
 
 net_emiss_CS_Models.plt<-ggplot(data= sum_merged_data, 
                          aes(x=year, y=netDifCornShock, group=Series, color=Series))+
@@ -433,6 +485,25 @@ net_emiss_SS_Models.plt<-ggplot(data= sum_merged_data,
   #use the custom color pallette
   scale_color_manual(values=ModelColors)
 
+cum_net_emiss_CS_Models.plt<-ggplot(data= sum_merged_data, 
+                         aes(x=year, y=aggNetSumDifCorncount, group=Series, color=Series))+
+  geom_line(aes(), size=2) +
+  #add a title
+  ggtitle("Total Net Corn Shock Emissions Over Baseline") +
+  #add labels
+  labs( x='Year', y='Emissions (Mt)') +
+  #use the custom color pallette
+  scale_color_manual(values=ModelColors)
+
+cum_net_emiss_SS_Models.plt<-ggplot(data= sum_merged_data, 
+                         aes(x=year, y=aggNetSumDifSoycount, group=Series, color=Series))+
+  geom_line(aes(), size=2) +
+  #add a title
+  #ggtitle("Total Cumulative Net soy Shock Emissions Over Baseline") +
+  #add labels
+  labs( x='Year', y='Emissions (Mt)') +
+  #use the custom color pallette
+  scale_color_manual(values=ModelColors)
 
 ```
 
