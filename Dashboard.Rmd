@@ -433,7 +433,9 @@ Row
 
 ```{r}
 LandUseAreaFuture.plt<- ggplot(wide_sum_LU %>%
-                                 filter(year >=2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2010), 
                                aes(x=year, y=BASE, color=Category)) + 
     geom_line(size=2) +
   #Set the legend to be on the bottom
@@ -699,7 +701,9 @@ Row
 
 #Create a spaghetti plot of land use area using area by category
 CornShockVegLines.plt<-ggplot(data= wide_sum_veg %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015),
                          aes(x=year, y=DifCornShock, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
@@ -722,7 +726,9 @@ ggplotly(CornShockVegLines.plt)
 ```{r}
 #Create a spaghetti plot of land use area using area by category
 SoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015),
                          aes(x=year, y=DifSoyShock, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
@@ -746,7 +752,9 @@ Row
 ```{r}
 #Create a spaghetti plot of land use area using area by category
 cumCornShockVegLines.plt<-ggplot(data= wide_sum_veg %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015), 
                          aes(x=year, y=cumSumCornVeg, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
@@ -769,7 +777,9 @@ ggplotly(cumCornShockVegLines.plt)
 
 #Create a spaghetti plot of land use area using area by category
 cumSoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015), 
                          aes(x=year, y=cumSumSoyVeg, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
@@ -799,7 +809,9 @@ Row
 ```{r}
 #Create a spaghetti plot of land use area using area by category
 CornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015),
                          aes(x=year, y=DifCornShock, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
@@ -821,7 +833,9 @@ ggplotly(CornShockLandUseLines.plt)
 ```{r}
 #Create a spaghetti plot of land use area using area by category
 SoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015), 
                          aes(x=year, y=DifSoyShock, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
@@ -846,7 +860,9 @@ Row
 ```{r}
 #Create a spaghetti plot of land use area using area by category
 CumCornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015), 
                          aes(x=year, y=CumSumCornLand, group=Category))+
   geom_line(aes(color=Category), size=2) +
   scale_color_manual(values=LUColors) +
@@ -862,7 +878,9 @@ ggplotly(CumCornShockLandUseLines.plt)
 
 ```{r}
 CumSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                    filter(year >2015), 
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 filter(year >2015),
                          aes(x=year, y=CumSumSoyLand, group=Category))+
   geom_line(aes(color=Category), size=2) +
   #add a title
