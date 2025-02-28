@@ -16,12 +16,18 @@ library(plyr)
 library(flexdashboard)
 library(tidyverse)
 library(ggnewscale)
-library(cowplot)
+library(kableExtra)
+```
 
+```{r}
+#Load the color palettes and files
+#Read in the land use files
 landUse<-read_csv("LandUse_Shocks.csv")
 
+#Read in the Vegetative Shock File
 vegShocks<-read_csv("Vegetative_Shocks.csv")
 
+#Read in the Land Use Color plots
 LUColors <- c("UrbanLand"="#C80813FF", "Urban"="#C80813FF", "Tundra"="#71D0F5FF", 
               "Rock/Ice/Desert"="#8A9197FF", "Cropland" = "#FED439FF",
               "HarvCropLand"="#FED439FF", "Harvested Cropland"="#FED439FF", 
@@ -31,18 +37,23 @@ LUColors <- c("UrbanLand"="#C80813FF", "Urban"="#C80813FF", "Tundra"="#71D0F5FF"
               "Grassland" = "#46732EFF", "Forest" = "#075149FF", 
               "Shrubland" = "#F05C3BFF", "otherNotArable"="#8A9197FF")
 
-# Vegetative Based Color Pallet
+# Vegetative Based Color Palette
 vegCEmissions<-c("#46732EFF")
 
+# Model Based Color Pallete
 ModelColors<- c("FAO"="#370335FF", "Houghton" = "#FED439FF", 
                 "GCAM" = "#FED439FF", "HWSD"="#1A9993FF", "SG17" = "#197EC0FF",
                 "SG20"="#F05C3BFF")
+
+#Vegetative Subsets
 
 #Break up the land leaf columns into subsets 
 #(each land leaf has 4 different categories)
 new_LU<-landUse %>% 
   separate(LandLeaf, c("LandUse", "Basin", "Water", "Input")) %>%
+  #split the scenario column by data
   separate(scenario, into = c('scenario', 'date'), sep = ",") %>%
+  #Select everything but date, basin and units
   select(-c("date", "Basin", "Units"))
 
 
@@ -323,32 +334,98 @@ sum_merged_data <- mergedData %>%
 Read Me
 =======================================================================
 
+Row
+-----------------------------------------------------------------------
+### Information
+
 This is an interactive dashboard set up to visualize the Baseline GCAM model results for the five different soil carbon scenarios (FAO Glosis (Series 84), Houghton (Series 85), Harmonized World Soils Database (Series 86), Soil Grids 2017 (Series 87), and Soil Grids 2020(Series 89)). 
 
 There are 5 tabs, this initial Read Me, and the Baseline Scenarios, which have the actual numbers associated with each of the simulations) 
 
 The Net and cumulative Emissions, Soil Emission Plots, Vegetative Plots, and Land Use Plots show the different value of the corn and soy shocks in relative to the baseline scenarios. 
 
-The initialization parameters for each model are listed below. 
+The initialization parameters for each model are listed below. Each plot is clickable, and lines can be toggled on and off, zoomed in on, and panned. 
 
-Each plot is clickable, and lines can be toggled on and off, zoomed in on, and panned. 
+In the Missouri River Basin, the biggest land use changes in the future timesteps involve the transition from unmanaged pasture to cropland. This difference of the initial parameters: Unmanaged Pasture - Cropland. In all of these results, the order of the results match the order of this change, largest to smallest in this order. The magnitude and oscillations differ in size, but the order does not.
 
-Row
------------------------------------------------------------------------
+- Houghton: 1.39 kg/m^2
+- SG17: -1.18 kg/m^2
+- HWSD: -1.55 kg/m^2 
+- SG20: -1.77 kg/m^2
+- FAO GLOSIS: -3.15 kg/m^2
+
 ### Initial Parameters
 
 ```{r}
-include_graphics("InitialTable.jpg") 
+Land <- c("Series","Cropland","Forest","Grassland","Pasture","Shrubland", "Urban")
+FAO <- c('84', 6.98, 6.20, 6.04, 3.83, 2.24, 6.01)
+Houghton <-c('85', 4.65, 8.42, 6.32, 6.04, 3.10, 3.02)
+HWSD <- c('86', 6.15, 5.34, 5.30, 4.60, 4.14, 6.13)
+SG17 <- c("87", 7.76, 9.92, 7.64, 6.58, 5.50, 5.80)
+SG20 <- c("89", 6.28, 4.97, 5.89, 4.51, 3.56, 4.00)
+
+
+df <- data.frame(Land, FAO, Houghton, HWSD, SG17, SG20) 
+
+df %>% mutate_if(is.numeric, format, digits=3) %>%
+  kbl(align = "c") %>% kable_material(c("striped", "hover", full_width = F))
+
 ```
+
+Row
+-----------------------------------------------------------------------
+
+### Tab Description
+**Definitions**
+
+*NET Emissions:* Soil + Vegetative Carbon added together for the current year
+
+*CUMULATIVE Emissions:* 2015 as year 1, to 2060, adding the current years net emissions to the sum of the previous years 
+
+
+**Future Baseline Scenarios:** 
+
+- Baseline Land Use Change - Projected Area (Mha) 
+- Baseline Soil and Vegetative Emissions - Annual Mt Emissions of the Vegetative Carbon and soil carbon for all 5 models
+- Net Baseline Emissions - for all 5 models
+- Net Cumulative Baseline Emissions - Cumulative emissions from 2015 to 2060 for the reference scenario
+
+**Net and Cumulative Emissions:**
+
+- Total Net Corn Shock Emissions Over Baseline
+- Total Net Soy Shock Emissions Over Baseline
+- Total Cumulative Net Corn Shock Emissions Over Baseline
+- Total Cumulative Net Soy Shock Emissions Over Baseline
+
+
+
+### Tab Description Cont.
+
+**Soil Emission Plots:** 
+
+- Total Corn Shock Emissions Over Baseline
+- Total Soy Shock Emissions Over Baseline
+- Soil Cumulative Corn Shock Emissions Over Baseline
+- Soil Cumulative Soy Shock Emissions Over Baseline
+
+
+**Vegetative Plots:** 
+
+- Corn Shock Vegetative Emission Change Over Baseline by Land Use Type
+- Soy Shock Vegetative Change Over Baseline by Land Use Type
+- Cumulative Corn Shock Vegetative Emission Change Over Baseline by Land Use Type
+- Cumulative Soy Shock Vegetative Change Over Baseline by Land Use Type
+
+**Land Use Plots:** 
+
+- Corn Shock Land Use Change Over Baseline by Land Use Type
+- Soy Shock Land Use Change Over Baseline by Land Use Type
+- Cumulative Corn Shock Land Use Change Over Baseline by Land Use Type
+- Cumulative Soy Shock Land Use Change Over Baseline by Land Use Type
+ 
 
 Future Baseline Scenarios
 =======================================================================
-Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
-
-Unmanaged Pasture - Cropland. 
-
-FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
-
 
 Row
 -----------------------------------------------------------------------
@@ -450,12 +527,6 @@ ggplotly(futCumNetEmissions.plt)
 Net and Cumulative Emissions 
 =======================================================================
 
-Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
-
-Unmanaged Pasture - Cropland. 
-
-FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
-
 Row
 -----------------------------------------------------------------------
 ### Total Net Corn Shock Emissions Over Baseline
@@ -532,12 +603,6 @@ ggplotly(cum_net_emiss_SS_Models.plt)
 
 Soil Emission Plots
 =======================================================================
-
-Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
-
-Unmanaged Pasture - Cropland. 
-
-FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
 
 Row
 -----------------------------------------------------------------------
@@ -624,12 +689,6 @@ ggplotly(tot_cum_soil_emiss_sums_SS_Models.plt)
 
 Vegetative Plots
 =======================================================================
-
-Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
-
-Unmanaged Pasture - Cropland. 
-
-FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
 
 Row
 -----------------------------------------------------------------------
@@ -732,12 +791,6 @@ ggplotly(cumSoyShockVegUseLines.plt)
 Land Use Plots
 =======================================================================
 
-Since the biggest land use change in these timesteps involve the transition from unmanaged pasture to cropland, I am taking the difference of the initial parameters: 
-
-Unmanaged Pasture - Cropland. 
-
-FAO GLOSIS: -3.15 kg/m^2, Houghton: 1.39 kg/m^2, HWSD: -1.55 kg/m^2, SG17: -1.18 kg/m^2, SG20: -1.77 kg/m^2
-
 Row
 -----------------------------------------------------------------------
 
@@ -796,15 +849,11 @@ CumCornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                     filter(year >2015), 
                          aes(x=year, y=CumSumCornLand, group=Category))+
   geom_line(aes(color=Category), size=2) +
+  scale_color_manual(values=LUColors) +
   #add a title
   #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Land Area (thous sq km)') +
-  #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+  labs( x='Year', y='Land Area (thous sq km)')
 
 ggplotly(CumCornShockLandUseLines.plt)
 ```
