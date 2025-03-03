@@ -201,6 +201,9 @@ wide_sum_veg<-sum_cat_veg  %>%
      )
 )
 
+sum_all_veg <- wide_sum_veg %>%
+  group_by(year) %>% 
+  summarise(across(where(is.numeric), sum))
 
 #Create a series loop to read in all of the data
 
@@ -583,191 +586,102 @@ Soil Emission Plots
 
 Row
 -----------------------------------------------------------------------
+###
 
-### Total Corn Shock Emissions Over Baseline
+### Total Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
 
   
-cum_soil_emiss_sums_CS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
-                                    filter(year > 2015), 
-                         aes(x=year, y=DifCornShock, group=Series))+
-  geom_line(aes(color=Series), size=2) +
+cum_soil_emiss_sums_CSSS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
+                                    filter(year > 2015))+
+  geom_line(aes(x=year, y=DifCornShock, color=Series, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=DifSoyShock, color=Series, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Total Corn Shock Emissions Over Baseline") +
   #add labels
-  labs( x='Year', y='Emissions (Mt)') +
+  labs( x='Year', y='Emissions (Mt)', linetype="Shock Type") +
   #use the custom color pallette
   scale_color_manual(values=ModelColors)
 # Use hollow circles
-ggplotly(cum_soil_emiss_sums_CS_Models.plt)
+ggplotly(cum_soil_emiss_sums_CSSS_Models.plt)
 ```
 
-
-### Total Soy Shock Emissions Over Baseline
-
-```{r}
-cum_soil_emiss_sums_SS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
-                                    filter(year > 2015), 
-                         aes(x=year, y=DifSoyShock, group=Series))+
-  geom_line(aes(color=Series), size=2) +
-  #add a title
-  #ggtitle("Total Soy Shock Emissions Over Baseline") +
-  #add labels
-  labs( x='Year', y='Emissions (Mt)') +
-  #use the custom color pallette
-  scale_color_manual(values=ModelColors)
-
-
-
-ggplotly(cum_soil_emiss_sums_SS_Models.plt)
-```
 
 Row
 -----------------------------------------------------------------------
+###
 
-### Soil Cumulative Corn Shock Emissions Over Baseline
+### Soil Cumulative Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
-tot_cum_soil_emiss_sums_CS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
-                                    filter(year > 2015), 
-                         aes(x=year, y=aggDifCorncount, group=Series))+
-  geom_line(aes(color=Series), size=2) +
+tot_cum_soil_emiss_sums_CSSS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
+                                    filter(year > 2015))+
+  geom_line(aes(x=year, y=aggDifCorncount, color=Series, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=aggDifSoycount, color=Series, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Soil Cumulative Corn Shock Emissions Over Baseline") +
   #add labels
-  labs( x='Year', y='Emissions (Mt)') +
+  labs( x='Year', y='Emissions (Mt)', linetype="Shock Type") +
   #use the custom color pallette
   scale_color_manual(values=ModelColors)
 
 
 
 # Add a loess smoothed fit curve with confidence region
-ggplotly(tot_cum_soil_emiss_sums_CS_Models.plt)
+ggplotly(tot_cum_soil_emiss_sums_CSSS_Models.plt)
 ```
 
-### Soil Cumulative Soy Shock Emissions Over Baseline
-
-```{r}
-tot_cum_soil_emiss_sums_SS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
-                                    filter(year > 2015), 
-                         aes(x=year, y=aggDifSoycount, group=Series))+
-  geom_line(aes(color=Series), size=2) +
-  #add a title
-  #ggtitle("Soil Cumulative Soy Shock Emissions Over Baseline") +
-  #add labels
-  labs( x='Year', y='Emissions (Mt)') +
-  #use the custom color pallette
-  scale_color_manual(values=ModelColors)
-
-
-ggplotly(tot_cum_soil_emiss_sums_SS_Models.plt)
-```
 
 Vegetative Plots
 =======================================================================
 
 Row
 -----------------------------------------------------------------------
+### 
 
-### Corn Shock Vegetative Emission Change Over Baseline by Land Use Type
+### Corn and Soy Shock Vegetative Emission Change Over Baseline
 
 ```{r}
 
 #Create a spaghetti plot of land use area using area by category
-CornShockVegLines.plt<-ggplot(data= wide_sum_veg %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(year >2015),
-                         aes(x=year, y=DifCornShock, group=Category))+
-  geom_line(aes(color=Category), size=2) +
+CornSoyShockVegLines.plt<-ggplot(data= sum_all_veg %>%
+                                 filter(year >2015))+
+  geom_line(aes(x=year, y=DifCornShock, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=DifSoyShock, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Corn Shock Vegetative Emission Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Vegetative Emissions (Mt)') +
+  labs( x='Year', y='Vegetative Emissions (Mt)', linetype = "Shock Values") +
   #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+  scale_color_manual(values=vegCEmissions)
 
-ggplotly(CornShockVegLines.plt)
+ggplotly(CornSoyShockVegLines.plt)
 ```
 
 
-
-### Soy Shock Vegetative Change Over Baseline by Land Use Type
-
-```{r}
-#Create a spaghetti plot of land use area using area by category
-SoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(year >2015),
-                         aes(x=year, y=DifSoyShock, group=Category))+
-  geom_line(aes(color=Category), size=2) +
-  #add a title
-  #ggtitle("Soy Shock Vegetative Change Over Baseline by Land Use Type") +
-  #add labels
-  labs( x='Year', y='Vegetative Emissions (Mt)') +
-  #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
-
-ggplotly(SoyShockVegUseLines.plt)
-
-```
 
 Row
 -----------------------------------------------------------------------
-### Cumulative Corn Shock Vegetative Emission Change Over Baseline by Land Use Type
+###
+
+
+### Cumulative Corn and Soy Shock Vegetative Emission Change Over Baseline
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
-cumCornShockVegLines.plt<-ggplot(data= wide_sum_veg %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(year >2015), 
-                         aes(x=year, y=cumSumCornVeg, group=Category))+
-  geom_line(aes(color=Category), size=2) +
+cumCornSoyShockVegLines.plt<-ggplot(data= sum_all_veg %>%
+                                 filter(year >2015))+
+  geom_line(aes(x=year, y=cumSumCornVeg, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=cumSumSoyVeg, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Corn Shock Vegetative Emission Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Vegetative Emissions (Mt)') +
+  labs( x='Year', y='Vegetative Emissions (Mt)', linetype="Shock Values") +
   #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+  scale_color_manual(values=vegCEmissions)
 
-ggplotly(cumCornShockVegLines.plt)                        
-```
-
-### Cumulative Soy Shock Vegetative Change Over Baseline by Land Use Type
-
-```{r}
-
-
-#Create a spaghetti plot of land use area using area by category
-cumSoyShockVegUseLines.plt<-ggplot(data= wide_sum_veg %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(year >2015), 
-                         aes(x=year, y=cumSumSoyVeg, group=Category))+
-  geom_line(aes(color=Category), size=2) +
-  #add a title
-  #ggtitle("Soy Shock Vegetative Change Over Baseline by Land Use Type") +
-  #add labels
-  labs( x='Year', y='Vegetative Emissions (Mt)') +
-  #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
-
-ggplotly(cumSoyShockVegUseLines.plt)
+ggplotly(cumCornSoyShockVegLines.plt)                        
 ```
 
 
@@ -778,95 +692,57 @@ Land Use Plots
 
 Row
 -----------------------------------------------------------------------
+### 
 
-### Corn Shock Land Use Change Over Baseline by Land Use Type
+### Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
-CornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
+CornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                  filter(Category !=c("Tundra")) %>%
                                  filter(Category !=c("Urban")) %>%
-                                 filter(year >2015),
-                         aes(x=year, y=DifCornShock, group=Category))+
-  geom_line(aes(color=Category), size=2) +
+                                 filter(Category !=c("Pasture"))  %>%
+                                 filter(Category !=c("Shrubland")) %>%
+                                 filter(year >2015))+
+  geom_line(aes(x=year, y=DifCornShock, color=Category, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=DifSoyShock, color=Category, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Land Area (thous sq km)') +
+  labs( x='Year', y='Land Area (thous sq km)', linetype="Shock Type") +
   #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
+  scale_color_manual(values=LUColors, name = "Land Use")
 
-ggplotly(CornShockLandUseLines.plt)
+ggplotly(CornSoyShockLandUseLines.plt)
 
 ```
 
-### Soy Shock Land Use Change Over Baseline by Land Use Type
-
-```{r}
-#Create a spaghetti plot of land use area using area by category
-SoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(year >2015), 
-                         aes(x=year, y=DifSoyShock, group=Category))+
-  geom_line(aes(color=Category), size=2) +
-  #add a title
-  #ggtitle("Soy Shock Land Use Change Over Baseline by Land Use Type") +
-  #add labels
-  labs( x='Year', y='Land Area (thous sq km)') +
-  #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
-
-ggplotly(SoyShockLandUseLines.plt)
-```
 
 
 Row
 -----------------------------------------------------------------------
 
-### Cumulative Corn Shock Land Use Change Over Baseline by Land Use Type
+### 
+
+### Cumulative Corn and Soy Shock Land Use Change Over Baseline by  Key Land Use Type
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
-CumCornShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
+CumCornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                  filter(Category !=c("Tundra")) %>%
                                  filter(Category !=c("Urban")) %>%
-                                 filter(year >2015), 
-                         aes(x=year, y=CumSumCornLand, group=Category))+
-  geom_line(aes(color=Category), size=2) +
+                                 filter(Category !=c("Pasture"))  %>%
+                                 filter(Category !=c("Shrubland")) %>%
+                                 filter(year >2015))+ 
+                        
+  geom_line(aes(x=year, y=CumSumCornLand, color=Category, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=CumSumSoyLand, color=Category, linetype="Soy"), size=2) +
   scale_color_manual(values=LUColors) +
   #add a title
   #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
   labs( x='Year', y='Land Area (thous sq km)')
 
-ggplotly(CumCornShockLandUseLines.plt)
+ggplotly(CumCornSoyShockLandUseLines.plt)
 ```
 
-### Cumulative Soy Shock Land Use Change Over Baseline by Land Use Type
-
-```{r}
-CumSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(year >2015),
-                         aes(x=year, y=CumSumSoyLand, group=Category))+
-  geom_line(aes(color=Category), size=2) +
-  #add a title
-  #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
-  #add labels
-  labs( x='Year', y='Land Area (thous sq km)') +
-  #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use", 
-                     labels = c( "Forest", "Grassland", "Harvested Cropland", 
-                                 "Other Arable Land", "Pasture", "Shrubland", 
-                                 "Tundra", "Unmanaged Pasture", "Urban Land"))
-
-ggplotly(CumSoyShockLandUseLines.plt)
-```
