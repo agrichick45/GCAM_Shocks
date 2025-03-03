@@ -436,10 +436,9 @@ LandUseAreaFuture.plt<- ggplot(wide_sum_LU %>%
                                  filter(Category !=c("Tundra")) %>%
                                  filter(Category !=c("Urban")) %>%
                                  filter(year >2010), 
-                               aes(x=year, y=BASE, color=Category)) + 
-    geom_line(size=2) +
+                               aes(x=year, y=BASE, fill=Category)) + 
+    geom_bar(position="stack", stat="identity") +
   #Set the legend to be on the bottom
-  theme(legend.position = "bottom")+
   #Add a title
   #ggtitle("A)Historic and Projected Land Use") +
   #add the labels
@@ -447,7 +446,7 @@ LandUseAreaFuture.plt<- ggplot(wide_sum_LU %>%
   #set the legend to be on one line
   #guides(fill = guide_legend(nrow = 1)) +
   #Use the custom designed color pallette and set names and labels
-  scale_color_manual(values=LUColors)
+  scale_fill_manual(values=LUColors)
 
 ggplotly(LandUseAreaFuture.plt)
 
@@ -531,77 +530,53 @@ Net and Cumulative Emissions
 
 Row
 -----------------------------------------------------------------------
-### Total Net Corn Shock Emissions Over Baseline
+###
+
+### Total Net Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
 
 
 
-net_emiss_CS_Models.plt<-ggplot(data= sum_merged_data %>%
-                                    filter(year > 2015), 
-                         aes(x=year, y=netDifCornShock, group=Series, color=Series))+
-  geom_line(aes(), size=2) +
+net_emiss_CSSS_Models.plt<-ggplot(data= sum_merged_data %>%
+                                    filter(year > 2015)) + 
+  geom_line(aes(x=year, y=netDifCornShock, color=Series, linetype="Corn"), size=2) +
+    geom_line(aes(x=year, y=netDifSoyShock, color=Series, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Total Net Corn Shock Emissions Over Baseline") +
   #add labels
-  labs( x='Year', y='Emissions (Mt)') +
+  labs( x='Year', y='Emissions (Mt)', linetype="Shock Type") + 
   #use the custom color pallette
   scale_color_manual(values=ModelColors)
 
-ggplotly(net_emiss_CS_Models.plt)
+ggplotly(net_emiss_CSSS_Models.plt)
 ```
 
-### Total Net Soy Shock Emissions Over Baseline
-```{r}
-net_emiss_SS_Models.plt<-ggplot(data= sum_merged_data %>%
-                                    filter(year > 2015), 
-                         aes(x=year, y=netDifSoyShock, group=Series, color=Series))+
-  geom_line(aes(), size=2) +
-  #add a title
-  #ggtitle("Total Net Soy Shock Emissions Over Baseline") +
-  #add labels
-  labs( x='Year', y='Emissions (Mt)') +
-  #use the custom color pallette
-  scale_color_manual(values=ModelColors)
-
-ggplotly(net_emiss_SS_Models.plt)
-```
 
 Row
 -----------------------------------------------------------------------
-### Total Cumulative Net Corn Shock Emissions Over Baseline
+### 
+
+### Total Cumulative Net Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
-cum_net_emiss_CS_Models.plt<-ggplot(data= sum_merged_data %>%
-                                    filter(year > 2015),
-                         aes(x=year, y=aggNetSumDifCorncount, group=Series, color=Series))+
-  geom_line(aes(), size=2) +
+cum_net_emiss_CSSS_Models.plt<-ggplot(data= sum_merged_data %>%
+                                    filter(year > 2015))+
+  geom_line(aes(x=year, y=aggNetSumDifCorncount, color=Series, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=aggNetSumDifSoycount, color=Series, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Total Cumulative Net Corn Shock Emissions Over Baseline") +
   #add labels
-  labs( x='Year', y='Emissions (Mt)') +
+  labs( x='Year', y='Emissions (Mt)', linetype="Shock Scenarios") +
   #use the custom color pallette
   scale_color_manual(values=ModelColors)
 
-ggplotly(cum_net_emiss_CS_Models.plt)
+ggplotly(cum_net_emiss_CSSS_Models.plt)
 ```
 
-### Total Cumulative Net Soy Shock Emissions Over Baseline
 
-```{r}
-cum_net_emiss_SS_Models.plt<-ggplot(data= sum_merged_data %>%
-                                    filter(year > 2015),
-                         aes(x=year, y=aggNetSumDifSoycount, group=Series, color=Series))+
-  geom_line(aes(), size=2) +
-  #add a title
-  #ggtitle("Total Cumulative Net soy Shock Emissions Over Baseline") +
-  #add labels
-  labs( x='Year', y='Emissions (Mt)') +
-  #use the custom color pallette
-  scale_color_manual(values=ModelColors)
 
-ggplotly(cum_net_emiss_SS_Models.plt)
-```
+
 
 Soil Emission Plots
 =======================================================================
