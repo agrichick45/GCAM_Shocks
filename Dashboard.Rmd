@@ -393,23 +393,23 @@ Read Me
 
 Row
 -----------------------------------------------------------------------
-### Information
+### Project Information
 
-This is an interactive dashboard set up to visualize the Baseline GCAM model results for the five different soil carbon scenarios (FAO Glosis (Series 84), Houghton (Series 85), Harmonized World Soils Database (Series 86), Soil Grids 2017 (Series 87), and Soil Grids 2020(Series 89)). 
+The model scenario modeled in this paper represent the reference scenario of the Model Comparison Exercise (EPA, 2023). The scenario was hypothetical and designed solely for the purpose of evaluating and comparing the models utilized in the paper.
 
-There are 5 tabs, this initial Read Me, and the Baseline Scenarios, which have the actual numbers associated with each of the simulations) 
+Originally, the both vegetative and terrestrial soil carbon values put into GCAM were based on Land type and Biome from Houghton (1999) and King et al. (1997), at a depth of 100 cm. Since the advent of the GCAM model, there have been several new, spatially aware soil models that have been developed. This research is one of the first studies looking at these different soil sources, and how changing the different inputs into the GCAM Land Allocation model changes the overall emissions picture.
 
-The Net and cumulative Emissions, Soil Emission Plots, Vegetative Plots, and Land Use Plots show the different value of the corn and soy shocks in relative to the baseline scenarios. 
+There are five different soil carbon sources represented in this research, with interactive display [here](https://agrichick45.github.io/Missouri_Basin_Rasters/soilRastersTogether.html): 
 
-The initialization parameters for each model are listed below. Each plot is clickable, and lines can be toggled on and off, zoomed in on, and panned. 
+- FAO Glosis dataset 
+- Initial Houghton Dataset, scaled down to 30 cm to match the 30 cm input of other data sources
+- Harmonized World Soils Database
+- SoilGrids 2017 (New default in GCAM after GCAM version 5.1)
+- SoilGrids 2020
 
-In the Missouri River Basin, the biggest land use changes in the future timesteps involve the transition from unmanaged pasture to cropland. This difference of the initial parameters: Unmanaged Pasture - Cropland. In all of these results, the order of the results match the order of this change, largest to smallest in this order. The magnitude and oscillations differ in size, but the order does not.
 
-- Houghton: 1.39 kg/m^2
-- SG17: -1.18 kg/m^2
-- HWSD: -1.55 kg/m^2 
-- SG20: -1.77 kg/m^2
-- FAO GLOSIS: -3.15 kg/m^2
+This is an interactive dashboard set up to visualize the Baseline GCAM model results for the five different soil carbon scenarios, how they impact the baseline emission levels, and the differences in magnitude these initialization impacts mean in the corn and soy shocks. 
+
 
 ### Initial Parameters
 
@@ -438,6 +438,22 @@ df %>%
 
 Row
 -----------------------------------------------------------------------
+### Dashboard Introduction
+
+There are 5 tabs, plus this initial Read Me. The **Baseline Scenarios**, which have the actual numbers associated with the reference scenarios for each of the simulations. These results are located in *The Net and cumulative Emissions* pane. 
+
+The *Soil Emission Plots* show the input based differences in the corn and soy shocks for each of these 5 soil models above the baseline model. The *Vegetative Plots*, and *Land Use Plots* have the same values in all five soil model scenarios, and these tabs show how the values of the corn and soy shocks relative to the baseline scenarios changes. 
+
+The initialization parameters for each model are listed in the table here. Each plot in this dashboard is clickable, and lines can be toggled on and off, zoomed in on, and panned. 
+
+In the Missouri River Basin, the biggest land use changes in the future timesteps involve the transition from unmanaged pasture to cropland. This difference of the initial parameters: Unmanaged Pasture - Cropland. In all of these results, the order of the results match the order of this change, largest to smallest in this order. The magnitude and oscillations differ in size, but the order does not.
+
+- Houghton: 1.39 kg/m^2
+- SG17: -1.18 kg/m^2
+- HWSD: -1.55 kg/m^2 
+- SG20: -1.77 kg/m^2
+- FAO GLOSIS: -3.15 kg/m^2
+
 
 ### Tab Description
 **Definitions**
@@ -456,6 +472,7 @@ Row
 
 **Net and Cumulative Emissions:**
 
+- Net Baseline Emissions - for all 5 models
 - Total Net Corn and Net Soy Shock Emissions Over Baseline
 - Total Cumulative Net Corn and Soy Shock Emissions Over Baseline
 
@@ -463,17 +480,18 @@ Row
 
 - Total Corn and Soy Shock Emissions Over Baseline
 - Soil Cumulative Corn and Soy Shock Emissions Over Baseline
+- Key Corn and Soy Land Use Emission Changes Over Baseline in the FAO model
 
-### Tab Description Cont.
 
 **Vegetative Plots:** 
 
-- Corn and Soy Shock Vegetative Emission Change Over Baseline 
-- Cumulative Corn and Soy Shock Vegetative Emission Change Over Baseline 
-
+- Total Corn and Soy Shock Vegetative Emission Change Over Baseline 
+- Total Cumulative Corn and Soy Shock Vegetative Emission Change Over Baseline 
+- Key Corn and Soy Land Use Emission Changes Over Baseline
 
 **Land Use Plots:** 
 
+- Baseline Land Use Change (Line Plot)
 - Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
 - Cumulative Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
  
@@ -511,6 +529,7 @@ ggplotly(LandUseAreaFuture.plt)
 ```
 
 ### Baseline Soil and Vegetative Emissions
+
 ```{r}
 #Calculate the future emissions plots
 futureEmissions.plt<-ggplot(data=sum_merged_data %>%
@@ -587,7 +606,7 @@ Net and Cumulative Emissions
 
 Row
 -----------------------------------------------------------------------
-###
+### Graphical Interpretations
 
 ### Total Net Corn and Soy Shock Emissions Over Baseline
 
@@ -612,7 +631,28 @@ ggplotly(net_emiss_CSSS_Models.plt)
 
 Row
 -----------------------------------------------------------------------
-### 
+### Net Baseline Emissions 
+
+```{r}
+#Calculate the net emissions plots by series
+futNetEmissions.plt<-ggplot(data=sum_merged_data %>%
+                              #filter to years greater than 2015
+                              filter(year >2015), 
+                            aes(x=year, y=BASENetEmiss, group=Series))+
+  geom_line(aes(color=Series), lwd=2) +
+      #Add the custom color manual and labels
+      scale_color_manual(values=c(ModelColors, name = "Emissions"), 
+                      labels = c("FAO Glosis", "Houghton", "HWSD", 
+                                 "SoilGrids 2017", "SoilGrids 2020")) +
+  #Add the title
+  #ggtitle("Future Net Emissions") +
+  #Add the theme elements
+  #theme(plot.title = element_text(hjust = 0.5)) +
+  #Add the labels
+  labs( x='Year', y='Total Emissions (Mt)') 
+  
+ggplotly(futNetEmissions.plt)
+```
 
 ### Total Cumulative Net Corn and Soy Shock Emissions Over Baseline
 
@@ -790,9 +830,13 @@ Land Use Plots
 
 Row
 -----------------------------------------------------------------------
-### 
+### Interpretaions
 
-### Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
+1) This is the line plot representation of the stacked bar chart measuring baseline land use changes in the reference scenario. This plot is here to provide the overall framework of changes. The biggest changes occur in Unmanaged Pasture (loss of 63.02 Mha over 45 years), with a majority of land gained from converstion to cropland (gain of 69.36 Mha). Other gains were from reforestation (5.11 Mha) and increases in managed pasture (2.56 Mha), and other losses were other arable land (8.48), Grassland (3.93 Mha), and Shrubland (1.63 Mha). 
+
+2) Soy shocks show more land use changes than corn shocks. At the peak of the shocks in 2030, there is an additional 0.43 Mha of Harvested Cropland over the baseline and an additional loss of 0.34 Mha from Unmanaged Pasture. The differences from the baseline in other arable land (0.04 Mha) and grassland (0.02) are much smaller. As the time continued, the rate of change relative to the baseline between the corn and soy shocks drops to 0.25 Mha for Harvested cropland, and 0.19 Mha for Unmanaged Pasture. 
+
+### 2) Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
@@ -807,7 +851,7 @@ CornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
   #add a title
   #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Land Area (thous sq km)', linetype="Shock Type") +
+  labs( x='Year', y='Land Area (Mha)', linetype="Shock Type") +
   #use the custom color pallette
   scale_color_manual(values=LUColors, name = "Land Use")
 
@@ -820,9 +864,34 @@ ggplotly(CornSoyShockLandUseLines.plt)
 Row
 -----------------------------------------------------------------------
 
-### 
+### 1) Baseline Land Use Change (Line Plot)
 
-### Cumulative Corn and Soy Shock Land Use Change Over Baseline by  Key Land Use Type
+```{r}
+#Create the baseline land use change plot
+LandUseAreaLineFuture.plt<- ggplot(wide_sum_LU %>%
+                                 #Remove the non dynamic categories
+                                 filter(Category !=c("Tundra")) %>%
+                                 filter(Category !=c("Urban")) %>%
+                                 #Remove the data from 2015
+                                 filter(year >2010), 
+                                 #graph the baseline data by land use category
+                                 aes(x=year, y=BASE, color=Category)) + 
+  #Use a stacked bar plot
+  geom_line(size=2)  +
+  #add the labels
+  labs(fill = "Land Use (Mha)", x='Year', y='Mha') + 
+  #set the legend to be on one line
+  #guides(fill = guide_legend(nrow = 1)) +
+  #Use the custom designed color pallette and set names and labels
+  scale_color_manual(values=LUColors)
+
+ggplotly(LandUseAreaLineFuture.plt)
+
+
+
+```
+
+### 3) Cumulative Corn and Soy Shock Land Use Change Over Baseline by  Key Land Use Type
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
@@ -839,7 +908,7 @@ CumCornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
   #add a title
   #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Land Area (thous sq km)')
+  labs( x='Year', y='Land Area (Mha)')
 
 ggplotly(CumCornSoyShockLandUseLines.plt)
 ```
