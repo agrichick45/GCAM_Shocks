@@ -680,9 +680,13 @@ Soil Emission Plots
 
 Row
 -----------------------------------------------------------------------
-###
+### Interpretations
 
-### Total Corn and Soy Shock Emissions Over Baseline
+1) This is the results from the soil emissions for all five of the different soil carbon sources. There are two models that have divergent patterns, the Houghton model, which generally has opposite trends in net soil emissions, and the FAO model. The other three models fit between the two, however, the pulses and shocks tend to follow that of the FAO model. There are two peaks, the 2030 soils peak, and another, smaller peak in 2050. The Houghton model has peak soil emissions in 2030, with the soy shocks reading at 0.13 Mt, and corn at 0.09 Mt. This point is when all other models are at peak sequestration, with the FAO soy shocks at -0.3 Mt below the baseline. Around the year 2042, the models switch, and the Houghton model has less emissions realtive to the baseline (~0.02 Mt), and the other 4 models having more emissions relative to the baseline (0.01-0.04 Mt). The FAO model has a larger amplitude between the corn and soy shocks (0.09 Mt in 2030, and 0.2 Mt in 2050) for the entire duration of the model. 
+
+2) This plot breaks down the key soil emissiosn by land use in the FAO model. A majority of the sequestration relative to the baseline comes from the expansion of harvested cropland (with soy generating peak differences at -0.78 Mt and corn -0.57 Mt), and the contraction of all other areas, especially unmanaged pasture (0.33 Mt from soy, and 0.24 from corn). The vast differences in the intial soil carbon density between these two fields (-3.15 kg/m^2). 
+
+### 1) Total Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
 
@@ -704,7 +708,7 @@ ggplotly(cum_soil_emiss_sums_CSSS_Models.plt)
 
 Row
 -----------------------------------------------------------------------
-### Soil Carbon Emissions by Key Land Use Type in the FAO Model
+### 2) Soil Carbon Emissions by Key Land Use Type in the FAO Model
  
 ```{r}
 tot_soil_emiss_sums_LU_Models.plt<-ggplot(data= mergedData %>%
@@ -756,9 +760,16 @@ Vegetative Plots
 
 Row
 -----------------------------------------------------------------------
-### 
+### Interpretations
 
-### Corn and Soy Shock Vegetative Emission Change Over Baseline
+1) This graph shows the overall vegetative emissions for both the corn and soy shocks. There is a huge spike in annualized vegetaive carbon emission between 2020 and 2030, with peak emissions being in 2025, at 0.16 Mt above baseline for the soy shocks, and 0.07 Mt above baseline for corn. This matches the rapid spikes of land use changes in this same time era. Starting in 2031, vegetative emissions drop to sequestration (negative values) for the duration of simulation. The soy shocks had a higher rate of sequestration compared to the baseline from 2030 to 2050, before the vegetative emissions become near zero. 
+
+2) This plot is a breakdown by land use area showing the overall emissions gained or lost.All of the negative emissions in the corn and soy shocks are from the expansion of Harvested cropland over the baseline, coming at the loss of unmanaged pastureland area, other arable land conversion, removing grassland from production and deforestation between 2020 and 2030. After 2030, unmanaged pasture emissions went from a source to a sink between 2030 and 2060, with harvested cropland and forestland becoming a source of emissions. The harvested cropland corn shocks were actually a higher source of emissions than the soy shocks, making this the only land use category that did not follow the pattern of soy shocks with a higher magnitude. 
+
+3) When all of the cumulative emissions from 2015 to 2060 are considered, the soy shocks had over double the total vegetative emissions (1.12 Mt) in comparison to the corn shocks (0.57 Mt). The overall cumulative emissions peak in 2030 (Corn 1.54 Mt, Soy 0.72 Mt), and start dropping until leveling out between 2050 and 2060, with soybean having a higher rate of decline compared to corn. 
+
+
+### 1)  Corn and Soy Shock Vegetative Emission Change Over Baseline
 
 ```{r}
 
@@ -781,7 +792,7 @@ ggplotly(CornSoyShockVegLines.plt)
 
 Row
 -----------------------------------------------------------------------
-### Corn and Soy Shock Vegetation Emissions Over Baseline by Key Land Use Type
+### 2) Corn and Soy Shock Vegetation Emissions Over Baseline by Key Land Use Type
 
 ```{r}
 
@@ -804,7 +815,7 @@ CornSoyShockLUVegLines.plt<-ggplot(data=wide_sum_veg %>%
 ggplotly(CornSoyShockLUVegLines.plt)
 ```
 
-### Cumulative Corn and Soy Shock Vegetative Emission Change Over Baseline
+### 3) Cumulative Corn and Soy Shock Vegetative Emission Change Over Baseline
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
@@ -834,7 +845,9 @@ Row
 
 1) This is the line plot representation of the stacked bar chart measuring baseline land use changes in the reference scenario. This plot is here to provide the overall framework of changes. The biggest changes occur in Unmanaged Pasture (loss of 63.02 Mha over 45 years), with a majority of land gained from converstion to cropland (gain of 69.36 Mha). Other gains were from reforestation (5.11 Mha) and increases in managed pasture (2.56 Mha), and other losses were other arable land (8.48), Grassland (3.93 Mha), and Shrubland (1.63 Mha). 
 
-2) Soy shocks show more land use changes than corn shocks. At the peak of the shocks in 2030, there is an additional 0.43 Mha of Harvested Cropland over the baseline and an additional loss of 0.34 Mha from Unmanaged Pasture. The differences from the baseline in other arable land (0.04 Mha) and grassland (0.02) are much smaller. As the time continued, the rate of change relative to the baseline between the corn and soy shocks drops to 0.25 Mha for Harvested cropland, and 0.19 Mha for Unmanaged Pasture. 
+2) Soy shocks show more land use changes than corn shocks. At the peak of the shocks in 2030, there is an additional 0.43 Mha of Harvested Cropland over the baseline and an additional loss of 0.34 Mha from Unmanaged Pasture. The differences from the baseline in other arable land (0.04 Mha) and grassland (0.02 Mha) are much smaller. As the time continued, the rate of change relative to the baseline between the corn and soy shocks drops to 0.25 Mha for Harvested cropland, and 0.19 Mha for Unmanaged Pasture. 
+
+3) This plot is the cumulative net emission change in the corn and soy shock over the entire calculated timeframe. Compared to the baseline, the soy shocks had an overall expansion of harvested cropland of 13% (9.19 Mha) relative to the baseline, and the corn shock had a gain of 10% (6.92 Mha). This made for the additional losses of unmanaged pasture (7.16 Mha and 5.40 Mha from the soy and corn shocks respectively). Both corn and soy shocks in the forested area showed just a slight level of deforestation compared to baseline. 
 
 ### 2) Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
 
