@@ -240,7 +240,7 @@ sum_all_veg <- wide_sum_veg %>%
 #Create a series loop to read in all of the data
 
 #Create a list of all .csv files in the output folder
-files <- list.files(path="~/github/GCAMShocks/GCAM_Shocks/Shocks", pattern = "\\values.csv$", 
+files <- list.files(path="Shocks", pattern = "\\values.csv$", 
                     full.names = TRUE)
 
 #Initialize an empty list to store data frames
@@ -607,8 +607,13 @@ Net and Cumulative Emissions
 Row
 -----------------------------------------------------------------------
 ### Graphical Interpretations
+1) This is the baseline total emissions for each of the soil models, put here as a reference for where the total net emission was per year. As the future simulations started, all models except the Houghton model were negative, with FAO having the most annualized sequestration (around -3 Mt). The Houghton net emissions were around 2 Mt annually. The SG 17, HWSD, and SG20 were all together between -1 and -1.5 Mt per year.  
 
-### Total Net Corn and Soy Shock Emissions Over Baseline
+2) This graph adds the vegetative emissions and the soil emissions for both of the shocks relative to the baseline. In general, the soy shocks have a higher magnitude (ranging from 2.75 Mt to -2.75 Mt) than those of the corn shocks (1.64 to -1.89 Mt). There is a peak in emissions for all models but Houghton in 2021, followed by a steep drop until 2030, and then an escalation to near zero emissions. The Houghton data continued to climb until 2030, and then started to drop until 2050 before stabilizing. 
+
+3) This is the total cumulative emissions above the baseline. The first thing to notice that is different about this graph, is that the soy shocks are not more "extreme" in the negative direction. In fact, there are two soy shock models that have net cumulative emissions compared to baseline, Houghton (2.33 Mt) and SoilGrids2017 (0.13 Mt). The cumulative emissions for the Houghton data peaks in 2038 at 2.74 Mt for soy and in 2041 at 1.73 Mt for corn, and slowly declines to 2.33 Mt (soy) and 1.50 Mt (Corn) over baseline. In contrast, the FAO corn shocks peak in 2022 for corn and 2023 for soy just above zero, and are negative for the duration of the model. Soy emissions are higher than corn until 2032, then it is lower, it is the only model that changes cumulative emissions in this way.  For the other two models, there are some changes in the peak timing in the model (between 2020 and 2030), and then the model dropped to below zero compared to the baseline. 
+
+### 2) Total Net Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
 
@@ -631,7 +636,7 @@ ggplotly(net_emiss_CSSS_Models.plt)
 
 Row
 -----------------------------------------------------------------------
-### Net Baseline Emissions 
+### 1) Net Baseline Emissions 
 
 ```{r}
 #Calculate the net emissions plots by series
@@ -654,7 +659,7 @@ futNetEmissions.plt<-ggplot(data=sum_merged_data %>%
 ggplotly(futNetEmissions.plt)
 ```
 
-### Total Cumulative Net Corn and Soy Shock Emissions Over Baseline
+### 3) Total Cumulative Net Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
 cum_net_emiss_CSSS_Models.plt<-ggplot(data= sum_merged_data %>%
@@ -684,7 +689,9 @@ Row
 
 1) This is the results from the soil emissions for all five of the different soil carbon sources. There are two models that have divergent patterns, the Houghton model, which generally has opposite trends in net soil emissions, and the FAO model. The other three models fit between the two, however, the pulses and shocks tend to follow that of the FAO model. There are two peaks, the 2030 soils peak, and another, smaller peak in 2050. The Houghton model has peak soil emissions in 2030, with the soy shocks reading at 0.13 Mt, and corn at 0.09 Mt. This point is when all other models are at peak sequestration, with the FAO soy shocks at -0.3 Mt below the baseline. Around the year 2042, the models switch, and the Houghton model has less emissions realtive to the baseline (~0.02 Mt), and the other 4 models having more emissions relative to the baseline (0.01-0.04 Mt). The FAO model has a larger amplitude between the corn and soy shocks (0.09 Mt in 2030, and 0.2 Mt in 2050) for the entire duration of the model. 
 
-2) This plot breaks down the key soil emissiosn by land use in the FAO model. A majority of the sequestration relative to the baseline comes from the expansion of harvested cropland (with soy generating peak differences at -0.78 Mt and corn -0.57 Mt), and the contraction of all other areas, especially unmanaged pasture (0.33 Mt from soy, and 0.24 from corn). The vast differences in the intial soil carbon density between these two fields (-3.15 kg/m^2). 
+2) This plot breaks down the key soil emissions by land use in the FAO model. A majority of the sequestration relative to the baseline comes from the expansion of harvested cropland (with soy generating peak differences at -0.78 Mt and corn -0.57 Mt), and the contraction of all other areas, especially unmanaged pasture (0.33 Mt from soy, and 0.24 from corn). The vast differences in the initial soil carbon density between these two fields (-3.15 kg/m^2) are responsible for a bulk of the soil emission changes being negative. 
+
+3) This plot is the total cumulative soil emissions from 2015 to 2060. The peak cumulative emissions or sequestration occured in the year 2041 for all models, with the Houghton input data being positive (1.4 Mt for soy and and 1.05 Mt for corn), and all other soil sources negative. The most interesting thing about these trends are that the soy values in the FAO data have a much higher amplitude between the corn and soy shocks over the course of the model (with a differences of around 0.6 Mt in the late stages of the model), compared to the other models, which are less than half that. 
 
 ### 1) Total Corn and Soy Shock Emissions Over Baseline
 
@@ -734,7 +741,7 @@ tot_soil_emiss_sums_LU_Models.plt<-ggplot(data= mergedData %>%
 ggplotly(tot_soil_emiss_sums_LU_Models.plt)
 ```
 
-### Soil Cumulative Corn and Soy Shock Emissions Over Baseline
+### 3) Soil Cumulative Corn and Soy Shock Emissions Over Baseline
 
 ```{r}
 tot_cum_soil_emiss_sums_CSSS_Models.plt<-ggplot(data= cum_soil_emiss_sums %>%
@@ -847,36 +854,6 @@ Row
 
 2) Soy shocks show more land use changes than corn shocks. At the peak of the shocks in 2030, there is an additional 0.43 Mha of Harvested Cropland over the baseline and an additional loss of 0.34 Mha from Unmanaged Pasture. The differences from the baseline in other arable land (0.04 Mha) and grassland (0.02 Mha) are much smaller. As the time continued, the rate of change relative to the baseline between the corn and soy shocks drops to 0.25 Mha for Harvested cropland, and 0.19 Mha for Unmanaged Pasture. 
 
-3) This plot is the cumulative net emission change in the corn and soy shock over the entire calculated timeframe. Compared to the baseline, the soy shocks had an overall expansion of harvested cropland of 13% (9.19 Mha) relative to the baseline, and the corn shock had a gain of 10% (6.92 Mha). This made for the additional losses of unmanaged pasture (7.16 Mha and 5.40 Mha from the soy and corn shocks respectively). Both corn and soy shocks in the forested area showed just a slight level of deforestation compared to baseline. 
-
-### 2) Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
-
-```{r}
-#Create a spaghetti plot of land use area using area by category
-CornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
-                                 filter(Category !=c("Tundra")) %>%
-                                 filter(Category !=c("Urban")) %>%
-                                 filter(Category !=c("Pasture"))  %>%
-                                 filter(Category !=c("Shrubland")) %>%
-                                 filter(year >2015))+
-  geom_line(aes(x=year, y=DifCornShock, color=Category, linetype="Corn"), size=2) +
-  geom_line(aes(x=year, y=DifSoyShock, color=Category, linetype="Soy"), size=2) +
-  #add a title
-  #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
-  #add labels
-  labs( x='Year', y='Land Area (Mha)', linetype="Shock Type") +
-  #use the custom color pallette
-  scale_color_manual(values=LUColors, name = "Land Use")
-
-ggplotly(CornSoyShockLandUseLines.plt)
-
-```
-
-
-
-Row
------------------------------------------------------------------------
-
 ### 1) Baseline Land Use Change (Line Plot)
 
 ```{r}
@@ -904,25 +881,36 @@ ggplotly(LandUseAreaLineFuture.plt)
 
 ```
 
-### 3) Cumulative Corn and Soy Shock Land Use Change Over Baseline by  Key Land Use Type
+
+
+
+Row
+-----------------------------------------------------------------------
+
+### 
+
+
+### 2) Corn and Soy Shock Land Use Change Over Baseline by Key Land Use Type
 
 ```{r}
 #Create a spaghetti plot of land use area using area by category
-CumCornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
+CornSoyShockLandUseLines.plt<-ggplot(data= wide_sum_LU %>%
                                  filter(Category !=c("Tundra")) %>%
                                  filter(Category !=c("Urban")) %>%
                                  filter(Category !=c("Pasture"))  %>%
                                  filter(Category !=c("Shrubland")) %>%
-                                 filter(year >2015))+ 
-                        
-  geom_line(aes(x=year, y=CumSumCornLand, color=Category, linetype="Corn"), size=2) +
-  geom_line(aes(x=year, y=CumSumSoyLand, color=Category, linetype="Soy"), size=2) +
-  scale_color_manual(values=LUColors) +
+                                 filter(year >2015))+
+  geom_line(aes(x=year, y=DifCornShock, color=Category, linetype="Corn"), size=2) +
+  geom_line(aes(x=year, y=DifSoyShock, color=Category, linetype="Soy"), size=2) +
   #add a title
   #ggtitle("Corn Shock Land Use Change Over Baseline by Land Use Type") +
   #add labels
-  labs( x='Year', y='Land Area (Mha)')
+  labs( x='Year', y='Land Area (Mha)', linetype="Shock Type") +
+  #use the custom color pallette
+  scale_color_manual(values=LUColors, name = "Land Use")
 
-ggplotly(CumCornSoyShockLandUseLines.plt)
+ggplotly(CornSoyShockLandUseLines.plt)
+
 ```
+
 
